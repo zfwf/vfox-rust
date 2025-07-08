@@ -5,35 +5,23 @@
 --- @return table Version information
 function PLUGIN:PreInstall(ctx)
     local version = ctx.version
+    if not version or version == "" then
+        return {}
+    end
+    local platform = "unknown-linux-gnu"
+    local arch = "x86_64"
+    local uname = io.popen("uname -m"):read("*l")
+    if uname:match("^arm") or uname:match("^aarch64") then
+        arch = "aarch64"
+    elseif uname:match("^i[3-6]86$") then
+        arch = "i686"
+    elseif uname:match("^x86_64$") then
+        arch = "x86_64"
+    end
+
     return {
-        --- Version number
-        version = "xxx",
-        --- remote URL or local file path [optional]
-        url = "xxx",
-        --- SHA256 checksum [optional]
-        sha256 = "xxx",
-        --- md5 checksum [optional]
-        md5 = "xxx",
-        --- sha1 checksum [optional]
-        sha1 = "xxx",
-        --- sha512 checksum [optional]
-        sha512 = "xx",
-        --- additional need files [optional]
-        addition = {
-            {
-                --- additional file name !
-                name = "xxx",
-                --- remote URL or local file path [optional]
-                url = "xxx",
-                --- SHA256 checksum [optional]
-                sha256 = "xxx",
-                --- md5 checksum [optional]
-                md5 = "xxx",
-                --- sha1 checksum [optional]
-                sha1 = "xxx",
-                --- sha512 checksum [optional]
-                sha512 = "xx",
-            }
-        }
+        version = version,
+        url = "https://static.rust-lang.org/rustup/rustup-init.sh",
+        note = "Rust toolchain " .. version,
     }
 end
